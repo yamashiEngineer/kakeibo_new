@@ -1,0 +1,19 @@
+# Maven / Gradle ビルド成果物
+app/target/
+app/.gradle/
+app/build/
+
+# IDE
+app/.idea/
+app/*.iml
+app/.eclipse/
+app/.settings/
+app/.classpath
+app/.project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# DB データボリューム（ローカル開発用）
+mysql/data/

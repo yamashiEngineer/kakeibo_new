@@ -1,0 +1,69 @@
+services:
+
+  # =====================================================
+  # MySQL 8 コンテナ
+  # =====================================================
+  db:
+    image: mysql:8.0
+    container_name: kakeibo-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kakeibo_db
+      MYSQL_USER: kakeibo_user
+      MYSQL_PASSWORD: kakeibo_pass
+    ports:
+      - "3306:3306"           # ホストからも接続可（DB クライアントでの確認用）
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d   # 初回起動時に自動実行
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =====================================================
+  # Spring Boot アプリコンテナ
+  # =====================================================
+  app:
+    build:
+      context: ./app          # プロジェクトを app/ に配置する
+      dockerfile: Dockerfile
+    container_name: kakeibo-app
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    environment:
+      # application.properties の設定を上書き
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/kakeibo_db?serverTimezone=Asia/Tokyo&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: kakeibo_user
+      SPRING_DATASOURCE_PASSWORD: kakeibo_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      db:
+        condition: service_healthy   # DB の起動完了を待ってから起動
+
+# =====================================================
+  # phpMyAdmin コンテナ
+  # =====================================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: kakeibo-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"                  # ブラウザでは http://localhost:8081 でアクセス
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db                # MySQLのサービス名（今回は db）を指定
+      - PMA_USER=root              # 初期入力用のユーザー名（省略可）
+      - PMA_PASSWORD=root          # 初期入力用のパスワード（省略可）
+    depends_on:
+      db:
+        condition: service_healthy # DBの起動が完了してからphpMyAdminを起動
+        
+volumes:
+  db_data:
