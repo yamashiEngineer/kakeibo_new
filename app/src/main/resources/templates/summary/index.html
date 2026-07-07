@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<body>
+<div>
+    <h2>月次集計</h2>
+
+    <table border="1">
+        <thead>
+        <tr>
+            <th>年月</th>
+            <th>収入合計</th>
+            <th>支出合計</th>
+            <th>収支</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${summaries}">
+            <td th:text="${s.month}"></td>
+            <td th:text="${s.income}"></td>
+            <td th:text="${s.expense}"></td>
+            <td th:text="${s.balance}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

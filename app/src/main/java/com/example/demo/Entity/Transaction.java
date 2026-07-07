@@ -35,10 +35,11 @@ public class Transaction {
     @Column(length = 200)
     private String memo;
 
+    @Column(nullable = false)
     private LocalDate txnDate;
 
     @Column(nullable = false, length = 10)
-    private String type;
+    private String type; // "income" or "expense"
 
     // updatable = false で更新時の上書きを防ぐ
     @Column(nullable = false, updatable = false)

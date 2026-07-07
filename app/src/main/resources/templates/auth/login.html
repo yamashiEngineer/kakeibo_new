@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン - 家計簿アプリ</title>
+</head>
+<body>
+<h2>ログイン</h2>
+
+<div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
+
+<form th:action="@{/login}" method="post">
+    <label>メールアドレス:
+        <input type="email" name="email" required>
+    </label><br>
+
+    <label>パスワード:
+        <input type="password" name="password" required>
+    </label><br>
+
+    <button type="submit">ログイン</button>
+</form>
+
+<p><a th:href="@{/register}">新規登録はこちら</a></p>
+</body>
+</html>

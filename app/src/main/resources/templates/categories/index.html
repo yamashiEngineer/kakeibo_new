@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<body>
+<div>
+    <h2>カテゴリ管理</h2>
+
+    <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/categories/add}" method="post">
+        <label>新規カテゴリ名:
+            <input type="text" name="name" required>
+        </label>
+        <button type="submit">追加</button>
+    </form>
+
+    <table border="1" style="margin-top: 20px;">
+        <thead>
+        <tr>
+            <th>カテゴリ名</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cat : ${categories}">
+            <td th:text="${cat.name}"></td>
+            <td>
+                <form th:action="@{/categories/{id}/delete(id=${cat.id})}" method="post">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

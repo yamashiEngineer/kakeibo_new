@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>家計簿アプリ</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/transactions}">収支一覧</a> |
+    <a th:href="@{/summary}">月次集計</a> |
+    <a th:href="@{/categories}">カテゴリ管理</a> |
+    <a th:href="@{/logout}">ログアウト</a>
+</nav>
+<hr>
+
+<div th:replace="${content}"></div>
+
+</body>
+</html>

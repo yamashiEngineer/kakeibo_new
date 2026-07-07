@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<body>
+<div>
+    <h2>収支登録</h2>
+    <form th:action="@{/transactions/save}" method="post">
+        <input type="hidden" name="id" th:value="${transaction?.id}">
+
+        <label>種別:</label>
+        <select name="type" required>
+            <option value="expense" th:selected="${transaction?.type == 'expense'}">支出</option>
+            <option value="income" th:selected="${transaction?.type == 'income'}">収入</option>
+        </select><br>
+
+        <label>金額:</label>
+        <input type="number" name="amount" min="1" required th:value="${transaction?.amount}"><br>
+
+        <label>カテゴリ:</label>
+        <select name="categoryId" required>
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.name}"
+                    th:selected="${transaction?.categoryId == cat.id}"></option>
+        </select><br>
+
+        <label>日付:</label>
+        <input type="date" name="txnDate" required th:value="${transaction?.txnDate}"><br>
+
+        <label>メモ:</label>
+        <input type="text" name="memo" th:value="${transaction?.memo}"><br>
+
+        <button type="submit">保存</button>
+        <a th:href="@{/transactions}">キャンセル</a>
+    </form>
+</div>
+</body>
+</html>

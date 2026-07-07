@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<body>
+<div>
+    <h2>収支一覧</h2>
+
+    <div th:with="
+            incomeTotal=${transactions.stream().filter(t -> t.type == 'income').mapToInt(t -> t.amount).sum()},
+            expenseTotal=${transactions.stream().filter(t -> t.type == 'expense').mapToInt(t -> t.amount).sum()}
+        ">
+        <p>収入合計: <span th:text="${incomeTotal}">0</span> 円</p>
+        <p>支出合計: <span th:text="${expenseTotal}">0</span> 円</p>
+        <p><strong>現在の収支: <span th:text="${incomeTotal - expenseTotal}">0</span> 円</strong></p>
+    </div>
+
+    <a th:href="@{/transactions/new}">新規登録</a>
+
+    <table border="1" style="margin-top: 10px;">
+        <thead>
+        <tr>
+            <th>日付</th>
+            <th>種別</th>
+            <th>カテゴリID</th>
+            <th>金額</th>
+            <th>メモ</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="txn : ${transactions}">
+            <td th:text="${txn.txnDate}"></td>
+            <td th:text="${txn.type == 'income' ? '収入' : '支出'}"></td>
+            <td th:text="${txn.categoryId}"></td>
+            <td th:text="${txn.amount}"></td>
+            <td th:text="${txn.memo}"></td>
+            <td>
+                <form th:action="@{/transactions/{id}/delete(id=${txn.id})}" method="post" onsubmit="return confirm('本当に削除しますか？');">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
