@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpSession;
+import com.example.demo.Service.SummaryService;
+import com.example.demo.Util.SessionUtil;
 
 @Controller
 public class SummaryController {

@@ -2,6 +2,10 @@ package com.example.demo.Service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
+import com.example.demo.Repository.CategoryRepository;
+import com.example.demo.Repository.TransactionRepository;
+import com.example.demo.Entity.Category;
+import com.example.demo.Exception.CategoryInUseException;
 
 @Service
 public class CategoryService {

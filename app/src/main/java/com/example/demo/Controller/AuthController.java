@@ -16,7 +16,7 @@ import com.example.demo.Exception.AuthenticationException;
 import com.example.demo.Exception.DuplicateEmailException;
 
 @Controller
-public class    AuthController {
+public class AuthController {
 
     private final UserService userService;
 
@@ -41,6 +41,8 @@ public class    AuthController {
             return "redirect:/transactions"; // ログイン成功時は一覧へ
         } catch (AuthenticationException e) {
             model.addAttribute("errorMessage", e.getMessage());
+            // ユーザーの利便性のため、入力されたメールアドレスは画面に残す
+            model.addAttribute("email", email);
             // エラー時の戻り値も auth/login に変更
             return "auth/login";
         }
@@ -63,7 +65,12 @@ public class    AuthController {
             SessionUtil.setLoginUserId(session, user.getId()); // 登録後即時ログイン
             return "redirect:/transactions";
         } catch (DuplicateEmailException e) {
+            // 例外が発生した場合、Modelにユーザー向けのエラーメッセージをセットする
             model.addAttribute("errorMessage", e.getMessage());
+
+            // 入力されたメールアドレスを画面に保持したままにするためのセット
+            model.addAttribute("email", email);
+
             // エラー時の戻り値も auth/register に変更
             return "auth/register";
         }

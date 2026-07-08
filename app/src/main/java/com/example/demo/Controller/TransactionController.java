@@ -31,7 +31,7 @@ public class TransactionController {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
-        model.addAttribute("transactions", transactionService.getTransactions(userId));
+        model.addAttribute("transactions", transactionService.findAllByUser(userId));
         return "transactions/list";
     }
 
@@ -76,7 +76,7 @@ public class TransactionController {
 
         try {
             // 自分のデータが存在するか確認して取得
-            Transaction transaction = transactionService.getTransaction(id, userId);
+            Transaction transaction = transactionService.findByIdAndUser(id, userId);
             model.addAttribute("transaction", transaction);
             model.addAttribute("categories", categoryService.getCategories(userId));
             return "transactions/form";
@@ -100,14 +100,14 @@ public class TransactionController {
 
         try {
             // 更新対象のデータを取得し、値を上書きする
-            Transaction transaction = transactionService.getTransaction(id, userId);
+            Transaction transaction = transactionService.findByIdAndUser(id, userId);
             transaction.setType(type);
             transaction.setAmount(amount);
             transaction.setCategoryId(categoryId);
             transaction.setTxnDate(LocalDate.parse(txnDate));
             transaction.setMemo(memo);
 
-            transactionService.saveTransaction(transaction);
+            transactionService.save(transaction);
         } catch (Exception e) {
             // 対象が見つからない場合はそのまま一覧へ
         }
@@ -120,7 +120,7 @@ public class TransactionController {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
-        transactionService.deleteTransaction(id, userId);
+        transactionService.deleteByIdAndUser(id, userId);
         return "redirect:/transactions";
     }
 }
