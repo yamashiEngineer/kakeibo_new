@@ -48,7 +48,6 @@ public class AuthController {
         }
     }
 
-    // メソッド名を showRegister に変更、戻り値を auth/register に変更
     @GetMapping("/register")
     public String showRegister() {
         return "auth/register";

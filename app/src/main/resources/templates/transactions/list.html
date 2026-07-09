@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
 <body>
+<div th:if="${session.LOGIN_USER != null}">
+    <p><span th:text="${session.LOGIN_USER.name}"></span>さん、こんにちは！</p>
+    <form action="/logout" method="post">
+        <button type="submit">ログアウト</button>
+    </form>
+</div>
 <div>
     <h2>収支一覧</h2>
 

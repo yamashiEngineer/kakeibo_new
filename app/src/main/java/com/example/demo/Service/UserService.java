@@ -27,7 +27,7 @@ public class UserService {
     public User register(String email, String password, String name) {
 
         // 1. メールアドレスの重複チェック
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (this.findByEmail(email).isPresent()) {
             throw new DuplicateEmailException("このメールアドレスは既に登録されています");
         }
 
@@ -62,7 +62,7 @@ public class UserService {
 
     public User authenticate(String email, String password) {
         // 1. メールアドレスからユーザーを取得（存在しない場合は例外）
-        User user = userRepository.findByEmail(email)
+        User user = this.findByEmail(email)
                 .orElseThrow(() -> new AuthenticationException("メールアドレスまたはパスワードが正しくありません"));
 
         // 2. パスワードの照合（一致しない場合は例外）

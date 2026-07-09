@@ -2,6 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
 <body>
 <div>
+    <div th:if="${session.LOGIN_USER != null}">
+        <p><span th:text="${session.LOGIN_USER.name}"></span>さん、こんにちは！</p>
+        <form action="/logout" method="post">
+            <button type="submit">ログアウト</button>
+        </form>
+    </div>
     <h2>カテゴリ管理</h2>
 
     <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
