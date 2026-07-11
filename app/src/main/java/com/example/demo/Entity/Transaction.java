@@ -1,13 +1,12 @@
 package com.example.demo.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -24,6 +23,9 @@ public class Transaction {
     private Long userId;
 
     @Column(nullable = false)
+    @NotNull(message = "金額は必須です")
+    // 【追加】1円以上の正の整数であることの制約
+    @Min(value = 1, message = "金額は1以上の正の整数を入力してください")
     private Integer amount;
 
     // ↓ 修正箇所: nameを明示し、Hibernateが混乱しないよう読み取り専用（insert/updateをfalse）に設定
