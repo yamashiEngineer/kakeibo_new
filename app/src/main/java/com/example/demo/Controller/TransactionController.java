@@ -1,28 +1,31 @@
 package com.example.demo.Controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import jakarta.servlet.http.HttpSession;
+import com.example.demo.Entity.Transaction;      // 欠けていたインポートを追加
+import com.example.demo.Entity.User;
+import com.example.demo.Repository.UserRepository;
+import com.example.demo.Service.CategoryService; // 欠けていたインポートを追加
 import com.example.demo.Service.TransactionService; // TransactionServiceの実際のパッケージ
 import com.example.demo.Util.SessionUtil;         // SessionUtilの実際のパッケージ
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
-import org.springframework.web.bind.annotation.*;
-import com.example.demo.Service.CategoryService; // 欠けていたインポートを追加
-import com.example.demo.Entity.Transaction;      // 欠けていたインポートを追加
+import java.util.List;
 
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
     private final TransactionService transactionService;
     private final CategoryService categoryService;
+    private final UserRepository userRepository;
 
-    public TransactionController(TransactionService transactionService, CategoryService categoryService) {
+    public TransactionController(TransactionService transactionService, CategoryService categoryService,
+                                 UserRepository userRepository) {
         this.transactionService = transactionService;
         this.categoryService = categoryService;
+        this.userRepository = userRepository;
     }
 
     // GET /transactions : 一覧表示
@@ -31,7 +34,37 @@ public class TransactionController {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
-        model.addAttribute("transactions", transactionService.findAllByUser(userId));
+        // 【追加】セッションのIDを使って、DBから最新のユーザー情報を取得する
+        // ※userServiceにfindByIdなどのメソッドがあると仮定しています
+        User user = userRepository.findById(userId).orElse(null);
+
+        // 【追加】HTML側で使えるように "loginUser" という名前でModelに詰める
+        model.addAttribute("loginUser", user);
+
+        // 2. 取引履歴の一覧を取得してモデルに追加
+        List<Transaction> transactions = transactionService.findAllByUser(userId);
+        model.addAttribute("transactions", transactions);
+
+        // 3. 【安全対策】データが空（またはnull）でもエラーにならないよう、Java側で合計を計算
+        int incomeTotal = 0;
+        int expenseTotal = 0;
+
+        if (transactions != null) {
+            incomeTotal = transactions.stream()
+                    .filter(t -> "income".equals(t.getType()))
+                    .mapToInt(t -> t.getAmount()) // ※Getterがない場合は t.amount
+                    .sum();
+
+            expenseTotal = transactions.stream()
+                    .filter(t -> "expense".equals(t.getType()))
+                    .mapToInt(t -> t.getAmount()) // ※Getterがない場合は t.amount
+                    .sum();
+        }
+
+        // 4. 計算済みの数値をモデルに追加
+        model.addAttribute("incomeTotal", incomeTotal);
+        model.addAttribute("expenseTotal", expenseTotal);
+
         return "transactions/list";
     }
 

@@ -1,11 +1,12 @@
 package com.example.demo.Service;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
-import com.example.demo.Repository.CategoryRepository;
-import com.example.demo.Repository.TransactionRepository;
 import com.example.demo.Entity.Category;
 import com.example.demo.Exception.CategoryInUseException;
+import com.example.demo.Repository.CategoryRepository;
+import com.example.demo.Repository.TransactionRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -23,7 +24,7 @@ public class CategoryService {
 
     public void addCategory(Long userId, String name) {
         Category category = new Category();
-        category.setUserId(userId);
+//        category.setUserId(userId);
         category.setName(name);
         categoryRepository.save(category);
     }

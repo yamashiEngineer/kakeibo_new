@@ -1,17 +1,15 @@
 package com.example.demo.Service;
 
 import com.example.demo.Entity.User;
-import com.example.demo.Entity.Category;
-import com.example.demo.Repository.UserRepository;
-import com.example.demo.Repository.CategoryRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.demo.Exception.AuthenticationException;
 import com.example.demo.Exception.DuplicateEmailException;
+import com.example.demo.Repository.CategoryRepository;
+import com.example.demo.Repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 @Service
@@ -40,23 +38,24 @@ public class UserService {
         // 3. ユーザーをデータベースに保存 (ここでidが自動採番される)
         User savedUser = userRepository.save(user);
 
-        // 4. 作成するデフォルトカテゴリの名前リスト
-        List<String> defaultCategoryNames = List.of(
-                "食費", "交通費", "光熱費", "給与", "その他"
-        );
-
-        // 5. カテゴリエンティティのリストを作成
-        List<Category> defaultCategories = defaultCategoryNames.stream().map(catName -> {
-            Category category = new Category();
-            category.setName(catName);
-            category.setUser(savedUser); // 先ほど保存・採番されたユーザーをセット
-            return category;
-        }).collect(Collectors.toList());
-
-        // 6. カテゴリを一括でデータベースに保存
-        categoryRepository.saveAll(defaultCategories);
-
-        // 7. 登録されたユーザー情報を返す
+//        // 4. 作成するデフォルトカテゴリの名前リスト
+//        List<String> defaultCategoryNames = List.of(
+//                "食費", "交通費", "光熱費", "給与", "その他"
+//        );
+//
+//        // 5. カテゴリエンティティのリストを作成
+//        List<Category> defaultCategories = defaultCategoryNames.stream().map(catName -> {
+//            Category category = new Category();
+//            category.setName(catName);
+//            category.setUser(savedUser); // 先ほど保存・採番されたユーザーをセット
+//            category.setUserId(savedUser.getId()); // ← 【追加】バリデーションを通過させるためにIDもセットする
+//            return category;
+//        }).collect(Collectors.toList());
+//
+//        // 6. カテゴリを一括でデータベースに保存
+//        categoryRepository.saveAll(defaultCategories);
+//
+//        // 7. 登録されたユーザー情報を返す
         return savedUser;
     }
 

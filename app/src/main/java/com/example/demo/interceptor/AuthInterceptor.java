@@ -1,5 +1,6 @@
 package com.example.demo.interceptor;
 
+import com.example.demo.Util.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -12,7 +13,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
 
         // セッションが存在しない、またはログイン情報がない場合は弾く
-        if (session == null || session.getAttribute("LOGIN_USER") == null) {
+        if (session == null || SessionUtil.getLoginUserId(session) == null) {
             response.sendRedirect("/login");
             return false; // コントローラーの処理を中断
         }

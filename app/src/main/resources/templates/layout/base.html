@@ -5,9 +5,9 @@
     <title>家計簿アプリ</title>
 </head>
 <body>
-<div th:if="${session.LOGIN_USER != null}">
-    <p><span th:text="${session.LOGIN_USER.name}"></span>さん、こんにちは！</p>
-    <form action="/logout" method="post">
+<div th:if="${loginUser != null}">
+    <p><span th:text="${loginUser.name}"></span>さん、こんにちは！</p>
+    <form th:action="@{/logout}" method="post">
         <button type="submit">ログアウト</button>
     </form>
 </div>
@@ -15,7 +15,9 @@
     <a th:href="@{/transactions}">収支一覧</a> |
     <a th:href="@{/summary}">月次集計</a> |
     <a th:href="@{/categories}">カテゴリ管理</a> |
-    <a th:href="@{/logout}">ログアウト</a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">ログアウト</button>
+    </form>
 </nav>
 <hr>
 
