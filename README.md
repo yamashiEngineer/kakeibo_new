@@ -105,25 +105,3 @@ src/main/
       | amount (>= 1)            |
       | type (income / expense)  |
       +--------------------------+
-```
-
----
-
-## 5. 実技試験 お題別・高速マッピングガイド（カスタマイズ手順）
-
-お題が「家計簿」以外だった場合、以下の表に従ってクラス名・変数名をリネームするだけで、数十分で完成度の高いシステムが組み上がります。
-
-| レイヤー / 本ひな形 | 備品発注システム | 社員・部署管理システム | 会議室・施設予約システム |
-| :--- | :--- | :--- | :--- |
-| **User (利用者)** | `Employee` (発注社員) | `Admin` (人事管理者) | `Member` (予約会員) |
-| **Category (マスタ)** | `Equipment` (備品マスタ) | `Department` (部署マスタ) | `Room` (会議室マスタ) |
-| **Transaction (履歴)**| `Order` (発注申請データ) | `EmployeeDetail` (所属社員データ)| `Reservation` (予約申込データ) |
-| **初期マスタ自動生成**<br>(`UserService`内) | "PC", "文房具", "書籍" などを<br>登録時に初期生成 | "営業部", "開発部", "総務部" などを<br>登録時に初期生成 | "会議室A", "大ホール" などを<br>登録時に初期生成 |
-| **集計Stream API**<br>(`TransactionService`) | `calcTotalQuantity`<br>(発注総数のSUM) | `calcAverageSalary`<br>(基本給のAVERAGE) | `calcTotalUsers`<br>(利用総人数のSUM) |
-| **マスタ削除制約例外** | `EquipmentInUseException` | `DepartmentInUseException` | `RoomInUseException` |
-
-### 試験開始直後のアクションプラン
-1. **エンティティの置換**: 上記表をもとに `User`, `Category`, `Transaction` をお題に合わせてRename（一括置換）する。
-2. **初期データ生成の書き換え**: `UserService.java` 内の `defaultCategoryNames` リストを、お題に合った初期マスタ名（例：「営業部」「開発部」）に変更する。
-3. **集計ロジックの書き換え**: `TransactionService.java` の Stream API で計算している箇所を、お題の「合計数量」などに修正する。
-4. **テンプレートの微修正**: 既に汎用化されているThymeleafテンプレートの `th:field` や文言をお題に合わせる。
