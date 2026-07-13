@@ -1,33 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::div})}">
+<head>
+    <title>月次集計 - 汎用システム</title>
+</head>
 <body>
 <div>
-    <div th:if="${loginUser != null}">
-        <p><span th:text="${loginUser.name}"></span>さん、こんにちは！</p>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">ログアウト</button>
-        </form>
-    </div>
-    <h2>月次集計</h2>
+    <h3 class="h3 mb-4 text-gray-800">月次集計レポート</h3>
 
-    <table border="1">
-        <thead>
-        <tr>
-            <th>年月</th>
-            <th>収入合計</th>
-            <th>支出合計</th>
-            <th>収支</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="s : ${summaries}">
-            <td th:text="${s.month}"></td>
-            <td th:text="${s.income}"></td>
-            <td th:text="${s.expense}"></td>
-            <td th:text="${s.balance}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>年月</th>
+                    <th class="text-end">収入合計</th>
+                    <th class="text-end">支出合計</th>
+                    <th class="text-end">当月収支</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${summaries}">
+                    <td class="font-weight-bold" th:text="${s.month}"></td>
+                    <td class="text-end text-success" th:text="${#numbers.formatInteger(s.income, 1, 'COMMA')} + ' 円'"></td>
+                    <td class="text-end text-danger" th:text="${#numbers.formatInteger(s.expense, 1, 'COMMA')} + ' 円'"></td>
+                    <td class="text-end font-weight-bold"
+                        th:classappend="${s.balance >= 0} ? 'text-primary' : 'text-danger'"
+                        th:text="${#numbers.formatInteger(s.balance, 1, 'COMMA')} + ' 円'"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(summaries)}">
+                    <td colspan="4" class="text-center text-muted py-4">集計データがありません。</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </body>
 </html>

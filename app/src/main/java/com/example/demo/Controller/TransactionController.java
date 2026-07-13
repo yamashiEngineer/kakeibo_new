@@ -1,7 +1,9 @@
 package com.example.demo.Controller;
 
+import com.example.demo.Entity.Category;
 import com.example.demo.Entity.Transaction;      // 欠けていたインポートを追加
 import com.example.demo.Entity.User;
+import com.example.demo.Repository.CategoryRepository;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.Service.CategoryService; // 欠けていたインポートを追加
 import com.example.demo.Service.TransactionService; // TransactionServiceの実際のパッケージ
@@ -23,12 +25,14 @@ public class TransactionController {
     private final TransactionService transactionService;
     private final CategoryService categoryService;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     public TransactionController(TransactionService transactionService, CategoryService categoryService,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository, CategoryRepository categoryRepository) {
         this.transactionService = transactionService;
         this.categoryService = categoryService;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     // GET /transactions : 一覧表示
@@ -77,7 +81,12 @@ public class TransactionController {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
+        // フォームバインディング用の空オブジェクトをセット
+        model.addAttribute("transaction", new Transaction());
+
+        // カテゴリ一覧をセット (form.htmlのth:each="cat : ${categories}"用)
         model.addAttribute("categories", categoryService.getCategories(userId));
+
         return "transactions/form";
     }
 
@@ -93,10 +102,17 @@ public class TransactionController {
         if (userId == null) return "redirect:/login";
 
         Transaction transaction = new Transaction();
-        transaction.setUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("無効なユーザーIDです"));
+        transaction.setUser(user);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("無効なカテゴリIDです"));
+        transaction.setCategory(category);
+//        transaction.setUserId(userId);
         transaction.setType(type);
         transaction.setAmount(amount);
-        transaction.setCategoryId(categoryId);
+//        transaction.setCategoryId(categoryId);
         transaction.setTxnDate(LocalDate.parse(txnDate));
         transaction.setMemo(memo);
 

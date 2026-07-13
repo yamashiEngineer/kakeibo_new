@@ -1,16 +1,16 @@
 package com.example.demo.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
-import jakarta.persistence.*;
-import lombok.Data;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -39,12 +39,7 @@ public class User {
     }
 
     // User : Category = 1 : 多
-    // mappedByには、Categoryクラス側で定義するフィールド名を指定します
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
-
-    // User : Transaction = 1 : 多
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transaction> transactions;
 
 }

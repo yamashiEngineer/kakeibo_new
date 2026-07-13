@@ -1,30 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::div})}">
 <head>
-    <meta charset="UTF-8">
-    <title>新規登録 - 家計簿アプリ</title>
+    <title>新規登録 - 汎用システム</title>
 </head>
 <body>
-<h2>アカウント作成</h2>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="card-title mb-0 text-center">新規アカウント登録</h5>
+            </div>
+            <div class="card-body p-4">
+                <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
 
-<div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
-
-<form th:action="@{/register}" method="post">
-    <label>表示名:
-        <input type="text" name="name" required>
-    </label><br>
-
-    <label>メールアドレス:
-        <input type="email" name="email" required>
-    </label><br>
-
-    <label>パスワード:
-        <input type="password" name="password" required>
-    </label><br>
-
-    <button type="submit">登録</button>
-</form>
-
-<p><a th:href="@{/login}">ログイン画面へ戻る</a></p>
+                <form th:action="@{/register}" method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">表示名（ユーザー名）</label>
+                        <input type="text" class="form-control" id="name" name="name" required placeholder="山田 太郎">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">メールアドレス</label>
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="example@email.com">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">パスワード</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid shadow-sm mb-3">
+                        <button type="submit" class="btn btn-success">アカウントを作成する</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <a th:href="@{/login}" class="text-decoration-none text-secondary">ログイン画面へ戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

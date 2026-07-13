@@ -1,43 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::div})}">
+<head>
+    <title>データ編集 - 汎用システム</title>
+</head>
 <body>
-<div th:if="${loginUser != null}">
-    <p><span th:text="${loginUser.name}"></span>さん、こんにちは！</p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">ログアウト</button>
-    </form>
-</div>
-<div>
-    <h2>収支登録</h2>
-    <form th:action="@{/transactions/save}" method="post">
-        <input type="hidden" name="id" th:value="${transaction?.id}">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white py-3">
+                <h5 class="card-title mb-0" th:text="${transaction?.id == null ? '収支データの新規登録' : '収支データの編集'}"></h5>
+            </div>
+            <div class="card-body p-4">
+                <form th:action="@{/transactions}" method="post" th:object="${transaction}">
+                    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                        </ul>
+                    </div>
+                    <input type="hidden" th:field="*{id}">
 
-        <label>種別:</label>
-        <select name="type" required>
-            <option value="expense" th:selected="${transaction?.type == 'expense'}">支出</option>
-            <option value="income" th:selected="${transaction?.type == 'income'}">収入</option>
-        </select><br>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label th:for="type" class="form-label font-weight-bold">種別</label>
+                            <select th:field="*{type}" class="form-select" required>
+                                <option value="expense">支出</option>
+                                <option value="income">収入</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label th:for="amount" class="form-label">金額 (円)</label>
+                            <input type="number" th:field="*{amount}" class="form-control" min="1" required placeholder="金額を入力">
+                        </div>
+                    </div>
 
-        <label>金額:</label>
-        <input type="number" name="amount" min="1" required th:value="${transaction?.amount}"><br>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label th:for="categoryId" class="form-label">カテゴリ</label>
+                            <select th:field="*{categoryId}" class="form-select" required>
+                                <option value="">-- 選択してください --</option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.name}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label th:for="txnDate" class="form-label">日付</label>
+                            <input type="date" th:field="*{txnDate}" class="form-control" required>
+                        </div>
+                    </div>
 
-        <label>カテゴリ:</label>
-        <select name="categoryId" required>
-            <option th:each="cat : ${categories}"
-                    th:value="${cat.id}"
-                    th:text="${cat.name}"
-                    th:selected="${transaction?.categoryId == cat.id}"></option>
-        </select><br>
+                    <div class="mb-4">
+                        <label th:for="memo" class="form-label">メモ</label>
+                        <input type="text" th:field="*{memo}" class="form-control" placeholder="詳細な補足など（任意）">
+                    </div>
 
-        <label>日付:</label>
-        <input type="date" name="txnDate" required th:value="${transaction?.txnDate}"><br>
-
-        <label>メモ:</label>
-        <input type="text" name="memo" th:value="${transaction?.memo}"><br>
-
-        <button type="submit">保存</button>
-        <a th:href="@{/transactions}">キャンセル</a>
-    </form>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a th:href="@{/transactions}" class="btn btn-outline-secondary">キャンセル</a>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">保存する</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

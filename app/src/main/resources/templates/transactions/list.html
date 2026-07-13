@@ -1,49 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: body(content=~{::div})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::div})}">
+<head>
+    <title>データ一覧 - 汎用システム</title>
+</head>
 <body>
-<div th:if="${loginUser != null}">
-    <p><span th:text="${loginUser.name}"></span>さん、こんにちは！</p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">ログアウト</button>
-    </form>
-</div>
 <div>
-    <h2>収支一覧</h2>
-
-    <div>
-        <p>収入合計: <span th:text="${incomeTotal}">0</span> 円</p>
-        <p>支出合計: <span th:text="${expenseTotal}">0</span> 円</p>
-        <p><strong>現在の収支: <span th:text="${incomeTotal - expenseTotal}">0</span> 円</strong></p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0 text-gray-800">収支データ一覧</h2>
+        <a th:href="@{/transactions/new}" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg"></i> ＋ 新規データ登録
+        </a>
     </div>
 
-    <a th:href="@{/transactions/new}">新規登録</a>
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card border-start border-success border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">収入合計</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span th:text="${incomeTotal}">0</span> 円</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card border-start border-danger border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">支出合計</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span th:text="${expenseTotal}">0</span> 円</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-start border-primary border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">現在の差引収支</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span th:text="${incomeTotal - expenseTotal}">0</span> 円</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <table border="1" style="margin-top: 10px;">
-        <thead>
-        <tr>
-            <th>日付</th>
-            <th>種別</th>
-            <th>カテゴリID</th>
-            <th>金額</th>
-            <th>メモ</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="txn : ${transactions}">
-            <td th:text="${txn.txnDate}"></td>
-            <td th:text="${txn.type == 'income' ? '収入' : '支出'}"></td>
-            <td th:text="${txn.categoryId}"></td>
-            <td th:text="${txn.amount}"></td>
-            <td th:text="${txn.memo}"></td>
-            <td>
-                <form th:action="@{/transactions/{id}/delete(id=${txn.id})}" method="post" onsubmit="return confirm('本当に削除しますか？');">
-                    <button type="submit">削除</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                    <tr>
+                        <th style="width: 15%">日付</th>
+                        <th style="width: 12%">種別</th>
+                        <th style="width: 15%">カテゴリ</th>
+                        <th style="width: 15%">金額</th>
+                        <th>メモ</th>
+                        <th class="text-center" style="width: 18%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="txn : ${transactions}">
+                        <td th:text="${txn.txnDate}"></td>
+                        <td>
+                                <span th:class="${txn.type == 'income'} ? 'badge bg-success' : 'badge bg-danger'"
+                                      th:text="${txn.type == 'income' ? '収入' : '支出'}"></span>
+                        </td>
+                        <td th:text="${txn.categoryId}"></td>
+                        <td class="font-weight-bold" th:text="${#numbers.formatInteger(txn.amount, 1, 'COMMA')} + ' 円'"></td>
+                        <td th:text="${txn.memo}"></td>
+                        <td class="text-center">
+                            <a th:href="@{/transactions/{id}/edit(id=${txn.id})}" class="btn btn-sm btn-outline-secondary me-1">編集</a>
+                            <form th:action="@{/transactions/{id}/delete(id=${txn.id})}" method="post" style="display:inline;" onsubmit="return confirm('本当に削除しますか？');">
+                                <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(transactions)}">
+                        <td colspan="6" class="text-center text-muted py-4">登録されているデータがありません。</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
