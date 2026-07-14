@@ -97,7 +97,8 @@ public class TransactionController {
                          @RequestParam Long categoryId,
                          @RequestParam String txnDate,
                          @RequestParam(required = false) String memo,
-                         HttpSession session) {
+                         HttpSession session,
+                         Model model) {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
@@ -115,7 +116,7 @@ public class TransactionController {
 //        transaction.setCategoryId(categoryId);
         transaction.setTxnDate(LocalDate.parse(txnDate));
         transaction.setMemo(memo);
-
+        model.addAttribute("transaction", new Transaction()); // 空のオブジェクトを渡す
         transactionService.save(transaction);
         return "redirect:/transactions";
     }
@@ -146,7 +147,8 @@ public class TransactionController {
                          @RequestParam Long categoryId,
                          @RequestParam String txnDate,
                          @RequestParam(required = false) String memo,
-                         HttpSession session) {
+                         HttpSession session,
+                         Model model) {
         Long userId = SessionUtil.getLoginUserId(session);
         if (userId == null) return "redirect:/login";
 
@@ -163,6 +165,7 @@ public class TransactionController {
         } catch (Exception e) {
             // 対象が見つからない場合はそのまま一覧へ
         }
+        model.addAttribute("transaction", transactionService.findByIdAndUser(id, userId)); // データを取得して渡す
         return "redirect:/transactions";
     }
 

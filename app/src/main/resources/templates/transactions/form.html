@@ -11,7 +11,9 @@
                 <h5 class="card-title mb-0" th:text="${transaction?.id == null ? '収支データの新規登録' : '収支データの編集'}"></h5>
             </div>
             <div class="card-body p-4">
-                <form th:action="@{/transactions}" method="post" th:object="${transaction}">
+                <form th:action="${transaction.id == null} ? @{/transactions} : @{/transactions/{id}(id=${transaction.id})}"
+                      method="post"
+                      th:object="${transaction}">
                     <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger" role="alert">
                         <ul class="mb-0">
                             <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>

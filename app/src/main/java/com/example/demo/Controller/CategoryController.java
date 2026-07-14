@@ -25,7 +25,7 @@ public class CategoryController {
         if (userId == null) return "redirect:/login";
 
         model.addAttribute("categories", categoryService.getCategories(userId));
-        return "categories/list";
+        return "categories/index";
     }
 
     // POST /categories : カテゴリ新規登録
@@ -49,7 +49,7 @@ public class CategoryController {
         } catch (CategoryInUseException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("categories", categoryService.getCategories(userId));
-            return "categories/list"; // エラー時に一覧画面を再表示
+            return "categories/index"; // エラー時に一覧画面を再表示
         }
         return "redirect:/categories";
     }
